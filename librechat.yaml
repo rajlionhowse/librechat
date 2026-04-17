@@ -1,0 +1,53 @@
+version: 1.3.5
+cache: true
+
+endpoints:
+  custom:
+    - name: "OpenRouter"
+      apiKey: "${OPENROUTER_KEY}"
+      baseURL: "https://openrouter.ai/api/v1"
+      models:
+        default: ["deepseek/deepseek-v3.2"]
+        fetch: true
+      titleConvo: true
+      titleModel: "current_model"
+      modelDisplayLabel: "OpenRouter"
+    - name: "Custom OpenAI"
+      apiKey: "user_provided"
+      baseURL: "user_provided"
+      models:
+        default: ["gpt-4"]
+        fetch: true
+      titleConvo: true
+      titleModel: "current_model"
+      modelDisplayLabel: "Custom"
+
+mcpServers:
+  brave-search:
+    type: streamable-http
+    url: "https://brave-search-mcp-railway-production.up.railway.app/"
+    initTimeout: 30000
+    timeout: 60000
+
+  exa-search:
+    type: streamable-http
+    url: "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
+    initTimeout: 30000
+    timeout: 60000
+
+memory:
+  disabled: false
+  personalize: true
+  messageWindowSize: 5
+
+interface:
+  memories: true
+  modelSelect: true
+  parameters: true
+  presets: true
+  agents:
+    use: true
+    create: true
+  mcpServers:
+    use: true
+    create: true
