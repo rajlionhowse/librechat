@@ -1,5 +1,5 @@
 const { logger } = require('@librechat/data-schemas');
-const { EnvVar, createContentAggregator } = require('@librechat/agents');
+const { createContentAggregator } = require('@librechat/agents');
 const {
   scopeSkillIds,
   loadSkillStates,
@@ -26,7 +26,6 @@ const {
   getDefaultHandlers,
 } = require('~/server/controllers/agents/callbacks');
 const { loadAgentTools, loadToolsForExecution } = require('~/server/services/ToolService');
-const { loadAuthValues } = require('~/server/services/Tools/credentials');
 const { filterFilesByAgentAccess } = require('~/server/services/Files/permissions');
 const { getSkillToolDeps, enrichWithSkillConfigurable } = require('./skillDeps');
 const { getModelsConfig } = require('~/server/controllers/ModelController');
@@ -136,21 +135,6 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
     accessibleSkillIds,
   });
 
-  // Resolve code API key once for the entire run (shared by primeInvokedSkills
-  // and enrichWithSkillConfigurable) to avoid redundant auth lookups.
-  let codeApiKey;
-  if (skillsCapabilityEnabled && enabledCapabilities.has(AgentCapabilities.execute_code)) {
-    try {
-      const authValues = await loadAuthValues({
-        userId: req.user.id,
-        authFields: [EnvVar.CODE_API_KEY],
-      });
-      codeApiKey = authValues[EnvVar.CODE_API_KEY];
-    } catch {
-      // non-fatal — primeInvokedSkills and enrichWithSkillConfigurable will work without it
-    }
-  }
-
   /**
    * Agent context store - populated after initialization, accessed by callback via closure.
    * Maps agentId -> { userMCPAuthMap, agent, tool_resources, toolRegistry, openAIApiKey }
@@ -184,7 +168,7 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
       });
 
       logger.debug(`[ON_TOOL_EXECUTE] loaded ${result.loadedTools?.length ?? 0} tools`);
-      return enrichWithSkillConfigurable(result, req, ctx.accessibleSkillIds, codeApiKey);
+      return enrichWithSkillConfigurable(result, req, ctx.accessibleSkillIds);
     },
     toolEndCallback,
     ...getSkillToolDeps(),
@@ -512,8 +496,6 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
           req,
           payload,
           accessibleSkillIds,
-          codeApiKey,
-          loadAuthValues,
           ...getSkillToolDeps(),
         })
     : undefined;

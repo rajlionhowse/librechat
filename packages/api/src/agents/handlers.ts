@@ -1,5 +1,5 @@
 import { logger } from '@librechat/data-schemas';
-import { GraphEvents, Constants, CODE_EXECUTION_TOOLS } from '@librechat/agents';
+import { EnvVar, GraphEvents, Constants, CODE_EXECUTION_TOOLS } from '@librechat/agents';
 import type {
   LCTool,
   EventHandler,
@@ -454,7 +454,7 @@ async function handleSkillToolCall(
     getStrategyFunctions &&
     batchUploadCodeEnvFiles
   ) {
-    const codeApiKey = (mergedConfigurable?.codeApiKey as string) ?? '';
+    const codeApiKey = process.env[EnvVar.CODE_API_KEY] ?? '';
     if (codeApiKey) {
       try {
         const skillFiles = await listSkillFiles(skill._id);
