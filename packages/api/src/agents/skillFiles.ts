@@ -225,6 +225,10 @@ export interface PrimeInvokedSkillsDeps {
   /** Raw message payload (before formatAgentMessages). Used to extract invoked skill names. */
   payload: Array<Partial<{ role: string; content: unknown }>>;
   accessibleSkillIds: Types.ObjectId[];
+  /** `execute_code` capability flag for the run. When false, the batch-upload
+   *  path is skipped entirely — skill bodies still reconstruct for history
+   *  rebuilds, but no sandbox traffic is generated. */
+  codeEnvAvailable: boolean;
   getSkillByName: (
     name: string,
     accessibleIds: Types.ObjectId[],
@@ -264,7 +268,7 @@ export async function primeInvokedSkills(
     return {};
   }
 
-  const apiKey = process.env[EnvVar.CODE_API_KEY] ?? '';
+  const apiKey = deps.codeEnvAvailable ? (process.env[EnvVar.CODE_API_KEY] ?? '') : '';
 
   const skills = new Map<string, string>();
 

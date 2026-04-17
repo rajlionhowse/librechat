@@ -320,7 +320,12 @@ const OpenAIChatCompletionController = async (req, res) => {
           tool_resources: primaryConfig.tool_resources,
           actionsEnabled: primaryConfig.actionsEnabled,
         });
-        return enrichWithSkillConfigurable(result, req, primaryConfig.accessibleSkillIds);
+        return enrichWithSkillConfigurable(
+          result,
+          req,
+          primaryConfig.accessibleSkillIds,
+          enabledCapabilities.has(AgentCapabilities.execute_code),
+        );
       },
       toolEndCallback,
       ...getSkillToolDeps(),

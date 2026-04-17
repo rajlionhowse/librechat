@@ -117,6 +117,7 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
    *  - the agent has stored skills (scoped by scopeSkillIds later). */
   const enabledCapabilities = new Set(appConfig?.endpoints?.[EModelEndpoint.agents]?.capabilities);
   const skillsCapabilityEnabled = enabledCapabilities.has(AgentCapabilities.skills);
+  const codeEnvAvailable = enabledCapabilities.has(AgentCapabilities.execute_code);
   const ephemeralSkillsToggle = req.body?.ephemeralAgent?.skills === true;
 
   const accessibleSkillIds = skillsCapabilityEnabled
@@ -168,7 +169,7 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
       });
 
       logger.debug(`[ON_TOOL_EXECUTE] loaded ${result.loadedTools?.length ?? 0} tools`);
-      return enrichWithSkillConfigurable(result, req, ctx.accessibleSkillIds);
+      return enrichWithSkillConfigurable(result, req, ctx.accessibleSkillIds, codeEnvAvailable);
     },
     toolEndCallback,
     ...getSkillToolDeps(),
@@ -238,7 +239,7 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
         accessibleSkillIds,
         ephemeralSkillsToggle ? undefined : primaryAgent.skills,
       ),
-      codeEnvAvailable: enabledCapabilities.has(AgentCapabilities.execute_code),
+      codeEnvAvailable,
       skillStates,
       defaultActiveOnShare,
     },
@@ -496,6 +497,7 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
           req,
           payload,
           accessibleSkillIds,
+          codeEnvAvailable,
           ...getSkillToolDeps(),
         })
     : undefined;
