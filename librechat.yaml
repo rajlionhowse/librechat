@@ -33,8 +33,8 @@ endpoints:
 
 mcpServers:
   brave-search:
-    type: sse
-    url: "https://brave-search-mcp-railway-production.up.railway.app/sse"
+    type: streamable-http
+    url: "https://brave-search-mcp-railway-production.up.railway.app/mcp"
     initTimeout: 30000
     timeout: 60000
 
