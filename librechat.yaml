@@ -31,21 +31,6 @@ endpoints:
       titleModel: "current_model"
       modelDisplayLabel: "Custom"
 
-mcpServers:
-  brave-search:
-    type: streamable-http
-    url: "https://brave-search-mcp-railway-production.up.railway.app/mcp"
-    headers:
-      Authorization: "Bearer ${BRAVE_MCP_API_KEY}"
-    initTimeout: 30000
-    timeout: 60000
-
-  exa-search:
-    type: streamable-http
-    url: "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa,web_search_advanced_exa"
-    initTimeout: 30000
-    timeout: 60000
-
 memory:
   disabled: false
   personalize: true
