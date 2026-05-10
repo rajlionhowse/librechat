@@ -9,7 +9,7 @@
 # Specific patterns to ignore
 data-node
 meili_data*
-librechat*
+# librechat*  # Removed to allow librechat.yaml to be baked into Docker image for Railway deployment
 Dockerfile*
 docs
 
