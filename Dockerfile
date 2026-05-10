@@ -50,6 +50,12 @@ RUN \
 # Node API setup
 EXPOSE 3080
 ENV HOST=0.0.0.0
+
+# Entrypoint: write all Railway environment variables to /app/.env so that
+# dotenv (api/server/index.js) reads them instead of the empty build-time file.
+COPY --chown=node:node entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["npm", "run", "backend"]
 
 # Optional: for client with nginx routing
